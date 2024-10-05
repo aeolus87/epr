@@ -1,6 +1,6 @@
 // _actions/homepageActions.js
 import { homepageConstants } from "../_constants";
-import homepageService from "../_services";
+import { homepageService } from "../_services";
 
 export const homepageActions = {
   getHomepageData,

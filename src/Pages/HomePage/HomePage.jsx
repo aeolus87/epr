@@ -1,15 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { getHomepageData } from "../../_actions";
+import PropTypes from "prop-types";
+import { homepageActions } from "../../_actions";
 import { TopNavigation } from "../../_components";
 import { Footer } from "../../_components/Footer";
 
-const HomePage = ({ homepage, getHomepageData }) => {
-  const { loading, data, error } = homepage;
+export const HomePage = ({ homepage, getHomepageData }) => {
+  const { loading, error, data } = homepage || {};
   const managerListRef = useRef(null);
 
   useEffect(() => {
-    getHomepageData();
+    // Ensure getHomepageData is a function before calling it
+    if (typeof getHomepageData === "function") {
+      getHomepageData();
+    } else {
+      console.error("getHomepageData is not a function");
+    }
   }, [getHomepageData]);
 
   const scrollLeft = () => {
@@ -118,14 +124,27 @@ const HomePage = ({ homepage, getHomepageData }) => {
   );
 };
 
-// Map state to props
+// PropTypes for type checking
+HomePage.propTypes = {
+  homepage: PropTypes.shape({
+    loading: PropTypes.bool,
+    error: PropTypes.shape({
+      message: PropTypes.string,
+    }),
+    data: PropTypes.shape({
+      scrimEvents: PropTypes.array,
+      clanManagers: PropTypes.array,
+    }),
+  }),
+  getHomepageData: PropTypes.func.isRequired,
+};
+
 const mapState = (state) => ({
   homepage: state.homepage,
 });
 
-// Action creators
 const actionCreators = {
-  getHomepageData,
+  getHomepageData: homepageActions.getHomepageData,
 };
 
 export default connect(mapState, actionCreators)(HomePage);
