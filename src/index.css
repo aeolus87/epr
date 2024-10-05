@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  font-family: "Bebas Neue", cursive;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.4; /* Adjust line height */
+  letter-spacing: 0.5px; /* Adjust letter spacing */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Bebas Neue", cursive;
+  line-height: 1.2; /* Tighter line height for headings */
+  letter-spacing: 0.5px; /* Slightly increase spacing */
+}
