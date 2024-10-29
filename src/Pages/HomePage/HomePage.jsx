@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { homepageActions } from "../../_actions";
 import { TopNavigation } from "../../_components";
@@ -9,28 +9,52 @@ export const HomePage = () => {
   const dispatch = useDispatch();
   const managerListRef = useRef(null);
   const { loading, error, data } = useSelector((state) => state.homepageData);
+  const [dataReady, setDataReady] = useState(false);
 
   useEffect(() => {
-    // Add error handling and cleanup
     const fetchData = async () => {
       try {
         await dispatch(homepageActions.getHomepageData());
+        setDataReady(true);
       } catch (err) {
         console.error("Error fetching homepage data:", err);
       }
     };
 
     fetchData();
-
-    // Cleanup function
-    return () => {
-      // Optional: dispatch an action to reset the state when component unmounts
-      // dispatch({ type: 'RESET_HOMEPAGE_DATA' });
-    };
   }, [dispatch]);
 
   // Debug logging
   console.log("Current Redux State:", { loading, error, data });
+
+  if (!dataReady) {
+    return (
+      <div className="bg-black text-white min-h-screen">
+        <TopNavigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          {/* Skeleton Loader Example */}
+          <div className="animate-pulse w-full max-w-md mx-auto">
+            <div className="h-4 bg-gray-700 rounded mb-4"></div>
+            <div className="h-4 bg-gray-700 rounded mb-4"></div>
+            <div className="h-4 bg-gray-700 rounded mb-4"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Check for error
+  if (error) {
+    return (
+      <div className="bg-black text-white min-h-screen">
+        <TopNavigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <h1 className="text-red-500">Error loading data: {error}</h1>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const scrollLeft = () => {
     if (managerListRef.current) {
@@ -48,29 +72,6 @@ export const HomePage = () => {
   const scrimEvents = data?.scrimEvents ?? [];
   const clanManagers = data?.clanManagers ?? [];
   const maps = data?.maps ?? [];
-
-  // Add loading state check at component level
-  if (loading && !data?.scrimEvents && !data?.clanManagers && !data?.maps) {
-    return (
-      <div className="bg-black text-white min-h-screen">
-        <TopNavigation />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-xl">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-black text-white min-h-screen">
-        <TopNavigation />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-xl text-red-500">Error: {error}</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-black text-white min-h-screen">
@@ -100,13 +101,7 @@ export const HomePage = () => {
       <section className="mb-12 max-w-6xl mx-auto px-4">
         <h2 className="text-3xl font-bold mb-4 text-center">SCRIM EVENTS</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {loading ? (
-            <div className="col-span-3 text-center">Loading...</div>
-          ) : error ? (
-            <div className="col-span-3 text-center text-red-500">
-              Error: {error}
-            </div>
-          ) : scrimEvents.length > 0 ? (
+          {scrimEvents.length > 0 ? (
             scrimEvents.map((event, index) => (
               <div
                 key={index}
@@ -117,6 +112,8 @@ export const HomePage = () => {
                 <p className="text-gray-300">{event.time}</p>
               </div>
             ))
+          ) : loading ? (
+            <div className="col-span-3 text-center">Loading...</div>
           ) : (
             <div className="col-span-3 text-center">No events available</div>
           )}
@@ -161,6 +158,7 @@ export const HomePage = () => {
                       onError={(e) => {
                         e.target.src = "/kanye-avatar.jpg";
                       }}
+                      loading="lazy" // Lazy loading the image
                     />
                   </div>
                   <div className="p-4">
@@ -186,7 +184,7 @@ export const HomePage = () => {
 
       {/* Selecting Favorite Map Section */}
       <section className="mb-12 max-w-6xl mx-auto px-4">
-        <div className="">
+        <div>
           <h2 className="text-3xl font-bold mb-6 text-center text-white">
             WHAT'S YOUR FAVORITE MAP? VOTE NOW!
           </h2>
