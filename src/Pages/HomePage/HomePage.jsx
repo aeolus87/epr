@@ -32,12 +32,7 @@ export const HomePage = () => {
       <div className="bg-black text-white min-h-screen">
         <TopNavigation />
         <div className="flex items-center justify-center min-h-[60vh]">
-          {/* Skeleton Loader Example */}
-          <div className="animate-pulse w-full max-w-md mx-auto">
-            <div className="h-4 bg-gray-700 rounded mb-4"></div>
-            <div className="h-4 bg-gray-700 rounded mb-4"></div>
-            <div className="h-4 bg-gray-700 rounded mb-4"></div>
-          </div>
+          <h1 className="text-black">Loading...</h1>
         </div>
       </div>
     );
