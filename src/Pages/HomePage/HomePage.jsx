@@ -170,7 +170,7 @@ export const HomePage = () => {
                 </div>
               ))
             ) : (
-              <div className="w-full text-center">No managers available</div>
+              <div className="w-full text-center">No managers available.</div>
             )}
           </div>
           {clanManagers.length > 0 && (
