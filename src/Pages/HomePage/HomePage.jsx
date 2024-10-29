@@ -1,22 +1,36 @@
 import React, { useEffect, useRef } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
 import { homepageActions } from "../../_actions";
 import { TopNavigation } from "../../_components";
-import { Footer } from "../../_components/Footer";
+import { Footer } from "../../_components";
+import { MapScroll } from "../../_components";
 
-export const HomePage = ({ homepage, getHomepageData }) => {
-  const { loading, error, data } = homepage || {};
+export const HomePage = () => {
+  const dispatch = useDispatch();
   const managerListRef = useRef(null);
+  const { loading, error, data } = useSelector((state) => state.homepageData);
 
   useEffect(() => {
-    // Ensure getHomepageData is a function before calling it
-    if (typeof getHomepageData === "function") {
-      getHomepageData();
-    } else {
-      console.error("getHomepageData is not a function");
-    }
-  }, [getHomepageData]);
+    // Add error handling and cleanup
+    const fetchData = async () => {
+      try {
+        await dispatch(homepageActions.getHomepageData());
+      } catch (err) {
+        console.error("Error fetching homepage data:", err);
+      }
+    };
+
+    fetchData();
+
+    // Cleanup function
+    return () => {
+      // Optional: dispatch an action to reset the state when component unmounts
+      // dispatch({ type: 'RESET_HOMEPAGE_DATA' });
+    };
+  }, [dispatch]);
+
+  // Debug logging
+  console.log("Current Redux State:", { loading, error, data });
 
   const scrollLeft = () => {
     if (managerListRef.current) {
@@ -30,121 +44,168 @@ export const HomePage = ({ homepage, getHomepageData }) => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // Safely access data with null checks
+  const scrimEvents = data?.scrimEvents ?? [];
+  const clanManagers = data?.clanManagers ?? [];
+  const maps = data?.maps ?? [];
 
-  const { scrimEvents = [], clanManagers = [] } = data || {};
+  // Add loading state check at component level
+  if (loading && !data?.scrimEvents && !data?.clanManagers && !data?.maps) {
+    return (
+      <div className="bg-black text-white min-h-screen">
+        <TopNavigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-xl">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-black text-white min-h-screen">
+        <TopNavigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-xl text-red-500">Error: {error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black text-white min-h-screen">
       <TopNavigation />
-      <div className="pb-12">
-        <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 w-full mb-8">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: "url('/epr-banner.jpg')" }}
-          ></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-        </div>
 
-        {/* Scrim Events Section */}
-        <section className="mb-12 max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-center">
-            SCRIM EVENTS
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {scrimEvents.map((event, index) => (
+      <div className="relative h-40 md:h-56 lg:h-96 w-full mb-8 overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/epr-banner.jpg')" }}
+        ></div>
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+
+        {/* Slogan Text */}
+        <div className="absolute inset-0 flex items-center justify-center md:justify-end p-4 md:mr-64 lg:p-8">
+          <p className="text-center md:text-right text-[#ceccc1] text-lg lg:text-4xl font-semibold font-slogan max-w-md px-4 md:px-0">
+            <span className="text-[#ffd943]">Euphonius Rivals:</span> Where
+            Fierce Battles Meet Unbreakable{" "}
+            <span className="text-[#ffd943]">Bonds</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Scrim Events Section */}
+      <section className="mb-12 max-w-6xl mx-auto px-4">
+        <h2 className="text-3xl font-bold mb-4 text-center">SCRIM EVENTS</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {loading ? (
+            <div className="col-span-3 text-center">Loading...</div>
+          ) : error ? (
+            <div className="col-span-3 text-center text-red-500">
+              Error: {error}
+            </div>
+          ) : scrimEvents.length > 0 ? (
+            scrimEvents.map((event, index) => (
               <div
                 key={index}
-                className="bg-gray-900 p-4 rounded-lg shadow-lg transition transform hover:scale-105"
+                className="bg-gradient-to-br from-gray-900 to-[#b69200] p-4 rounded-lg shadow-lg transition transform hover:scale-105"
               >
-                <h3 className="text-base sm:text-lg font-semibold mb-1">{`${event.team1} vs ${event.team2}`}</h3>
-                <p className="text-sm sm:text-base text-gray-400 mb-1">
-                  {event.rule}
-                </p>
-                <p className="text-sm sm:text-base text-gray-500">
-                  {event.time}
-                </p>
+                <h3 className="text-lg font-semibold text-white mb-1">{`${event.team1} vs ${event.team2}`}</h3>
+                <p className="text-gray-200 mb-1">{event.rule}</p>
+                <p className="text-gray-300">{event.time}</p>
               </div>
-            ))}
-          </div>
-        </section>
+            ))
+          ) : (
+            <div className="col-span-3 text-center">No events available</div>
+          )}
+        </div>
+      </section>
 
-        {/* Clan Managers Section */}
-        <section className="mb-12 max-w-6xl mx-auto px-4 relative">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-            CLAN MANAGEMENT TEAM
-          </h2>
-          <div className="relative flex items-center">
+      {/* Clan Managers Section */}
+      <section className="mb-12 max-w-6xl mx-auto px-4 relative">
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          CLAN MANAGEMENT TEAM
+        </h2>
+        <div className="relative flex items-center">
+          {clanManagers.length > 0 && (
             <button
               onClick={scrollLeft}
-              className="hidden md:block absolute left-0 -ml-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300 z-10"
+              className="absolute left-0 -ml-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300 z-10"
             >
               &lt;
             </button>
-            <div
-              ref={managerListRef}
-              className="flex space-x-4 md:space-x-6 overflow-x-auto pb-4 scroll-smooth"
-            >
-              {clanManagers.map((manager, index) => (
+          )}
+          <div
+            ref={managerListRef}
+            className="flex space-x-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar"
+          >
+            {loading ? (
+              <div className="w-full text-center">Loading...</div>
+            ) : error ? (
+              <div className="w-full text-center text-red-500">
+                Error: {error}
+              </div>
+            ) : clanManagers.length > 0 ? (
+              clanManagers.map((manager, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 w-48 sm:w-56 md:w-64 bg-gray-900 rounded-lg overflow-hidden border border-gray-700"
+                  className="flex-shrink-0 w-64 bg-gray-900 rounded-lg overflow-hidden border border-gray-700"
                 >
-                  <div className="bg-white h-56 sm:h-64 md:h-80 flex items-center justify-center">
+                  <div className="bg-white h-80 flex items-center justify-center">
                     <img
                       src={manager.image}
                       alt={manager.name}
-                      className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "/kanye-avatar.jpg";
+                      }}
                     />
                   </div>
-                  <div className="p-3 sm:p-4">
-                    <p className="font-semibold text-base sm:text-lg">
-                      {manager.name}
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-400">
-                      {manager.role}
-                    </p>
+                  <div className="p-4">
+                    <p className="font-semibold text-lg">{manager.name}</p>
+                    <p className="text-sm text-gray-400">{manager.role}</p>
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <div className="w-full text-center">No managers available</div>
+            )}
+          </div>
+          {clanManagers.length > 0 && (
             <button
               onClick={scrollRight}
-              className="hidden md:block absolute right-0 -mr-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300"
+              className="absolute right-0 -mr-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300"
             >
               &gt;
             </button>
-          </div>
-        </section>
-      </div>
+          )}
+        </div>
+      </section>
 
+      {/* Selecting Favorite Map Section */}
+      <section className="mb-12 max-w-6xl mx-auto px-4">
+        <div className="">
+          <h2 className="text-3xl font-bold mb-6 text-center text-white">
+            WHAT'S YOUR FAVORITE MAP? VOTE NOW!
+          </h2>
+          {loading ? (
+            <div className="text-center py-8">Loading...</div>
+          ) : error ? (
+            <div className="text-center text-red-500 py-8">Error: {error}</div>
+          ) : maps.length > 0 ? (
+            <MapScroll maps={maps} />
+          ) : (
+            <div className="text-center py-8">No maps available</div>
+          )}
+        </div>
+      </section>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
 };
 
-// PropTypes for type checking
-HomePage.propTypes = {
-  homepage: PropTypes.shape({
-    loading: PropTypes.bool,
-    error: PropTypes.shape({
-      message: PropTypes.string,
-    }),
-    data: PropTypes.shape({
-      scrimEvents: PropTypes.array,
-      clanManagers: PropTypes.array,
-    }),
-  }),
-  getHomepageData: PropTypes.func.isRequired,
-};
-
-const mapState = (state) => ({
-  homepage: state.homepage,
-});
-
-const actionCreators = {
-  getHomepageData: homepageActions.getHomepageData,
-};
-
-export default connect(mapState, actionCreators)(HomePage);
+export default HomePage;

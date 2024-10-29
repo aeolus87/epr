@@ -20,3 +20,12 @@ h6 {
   line-height: 1.2; /* Tighter line height for headings */
   letter-spacing: 0.5px; /* Slightly increase spacing */
 }
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; /* Firefox */
+}

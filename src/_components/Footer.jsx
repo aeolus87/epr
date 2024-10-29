@@ -5,7 +5,7 @@ export const Footer = () => {
     <footer className="bg-gray-900 text-white pt-12 sm:pt-16 pb-8">
       {/* Get In Touch Section */}
       <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16 px-4">
-        <h2 className="text-3xl sm:text-4xl font-bold text-red-500 mb-4">
+        <h2 className="text-3xl sm:text-4xl font-bold text-[#ffd943] mb-4">
           Get In Touch
         </h2>
         <p className="text-gray-300 mb-6 text-sm sm:text-base">
@@ -13,7 +13,7 @@ export const Footer = () => {
           musical battles. Connect, compete, and collaborate with fellow
           artists.
         </p>
-        <button className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition duration-300 text-sm sm:text-base">
+        <button className="bg-[#bc990e] text-white px-4 py-2 rounded hover:bg-[#65561a] transition duration-300 text-sm sm:text-base">
           Join Us Now!
         </button>
       </div>

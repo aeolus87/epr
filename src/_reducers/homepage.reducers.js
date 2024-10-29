@@ -1,35 +1,39 @@
 // _reducers/homepageReducer.js
-import { homepageConstants } from "../_constants/homepageConstants";
+import { homepageConstants } from "../_constants";
 
 const initialState = {
   loading: false,
-  items: [], // default structure for websites data including sitemaps
+  data: {
+    scrimEvents: [],
+    clanManagers: [],
+    maps: [],
+  },
   error: null,
 };
 
-export function homepageReducer(state = initialState, action) {
+export const homepageReducer = (state = initialState, action) => {
   switch (action.type) {
-    // GETTING WEBSITES
     case homepageConstants.GET_HOMEPAGE_DATA_REQUEST:
       return {
         ...state,
         loading: true,
-        error: null, // Clear error on new request
+        error: null,
       };
     case homepageConstants.GET_HOMEPAGE_DATA_SUCCESS:
       return {
         ...state,
         loading: false,
-        items: action.homepage,
+        data: action.data, // this should work if you are dispatching the data correctly
       };
     case homepageConstants.GET_HOMEPAGE_DATA_FAILURE:
       return {
         ...state,
         loading: false,
-        error: action.error, // Store the error message
+        error: action.error,
       };
-
     default:
       return state;
   }
-}
+};
+
+export default homepageReducer;
