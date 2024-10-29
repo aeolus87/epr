@@ -1,14 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { homepageActions } from "../../_actions";
+import React, { useEffect, useState, useRef } from "react";
 import { TopNavigation } from "../../_components";
 import { Footer } from "../../_components";
 import { MapScroll } from "../../_components";
+import { useDispatch, useSelector } from "react-redux";
+import { homepageActions } from "../../_actions";
+
+const LoadingSpinner = () => (
+  <div className="flex flex-col items-center justify-center gap-4">
+    <div className="w-16 h-16 border-4 border-t-[#ffd943] border-r-[#b69200] border-b-[#ffd943] border-l-[#b69200] rounded-full animate-spin" />
+    <div className="text-lg text-[#ffd943] font-medium animate-pulse">
+      Loading...
+    </div>
+  </div>
+);
 
 export const HomePage = () => {
   const dispatch = useDispatch();
   const managerListRef = useRef(null);
   const { loading, error, data } = useSelector((state) => state.homepageData);
+  const [showLoading, setShowLoading] = useState(true);
   const [dataReady, setDataReady] = useState(false);
 
   useEffect(() => {
@@ -16,29 +26,31 @@ export const HomePage = () => {
       try {
         await dispatch(homepageActions.getHomepageData());
         setDataReady(true);
+
+        setTimeout(() => {
+          setShowLoading(false);
+        }, 100);
       } catch (err) {
         console.error("Error fetching homepage data:", err);
+        setShowLoading(false);
       }
     };
 
     fetchData();
   }, [dispatch]);
 
-  // Debug logging
-  console.log("Current Redux State:", { loading, error, data });
-
-  if (!dataReady) {
+  if (showLoading || !dataReady) {
     return (
       <div className="bg-black text-white min-h-screen">
         <TopNavigation />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <h1 className="text-black">Loading...</h1>
+          <LoadingSpinner />
         </div>
       </div>
     );
   }
 
-  // Check for error
+  // Rest of your existing code remains the same...
   if (error) {
     return (
       <div className="bg-black text-white min-h-screen">
@@ -63,7 +75,6 @@ export const HomePage = () => {
     }
   };
 
-  // Safely access data with null checks
   const scrimEvents = data?.scrimEvents ?? [];
   const clanManagers = data?.clanManagers ?? [];
   const maps = data?.maps ?? [];
