@@ -50,7 +50,6 @@ export const HomePage = () => {
     );
   }
 
-  // Rest of your existing code remains the same...
   if (error) {
     return (
       <div className="bg-black text-white min-h-screen">
@@ -84,16 +83,11 @@ export const HomePage = () => {
       <TopNavigation />
 
       <div className="relative h-40 md:h-56 lg:h-96 w-full mb-8 overflow-hidden">
-        {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/epr-banner.jpg')" }}
         ></div>
-
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-
-        {/* Slogan Text */}
         <div className="absolute inset-0 flex items-center justify-center md:justify-end p-4 md:mr-64 lg:p-8">
           <p className="text-center md:text-right text-[#ceccc1] text-lg lg:text-4xl font-semibold font-slogan max-w-md px-4 md:px-0">
             <span className="text-[#ffd943]">Euphonius Rivals:</span> Where
@@ -131,27 +125,24 @@ export const HomePage = () => {
         <h2 className="text-3xl font-bold mb-6 text-center">
           CLAN MANAGEMENT TEAM
         </h2>
-        <div className="relative flex items-center">
-          {clanManagers.length > 0 && (
+        {loading ? (
+          <div className="w-full text-center">Loading...</div>
+        ) : error ? (
+          <div className="w-full text-center text-red-500">Error: {error}</div>
+        ) : clanManagers.length > 0 ? (
+          <div className="relative flex items-center">
+            {/* Scroll buttons - hidden on mobile */}
             <button
               onClick={scrollLeft}
-              className="absolute left-0 -ml-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300 z-10"
+              className="hidden md:block absolute left-0 -ml-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300 z-10"
             >
               &lt;
             </button>
-          )}
-          <div
-            ref={managerListRef}
-            className="flex space-x-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar"
-          >
-            {loading ? (
-              <div className="w-full text-center">Loading...</div>
-            ) : error ? (
-              <div className="w-full text-center text-red-500">
-                Error: {error}
-              </div>
-            ) : clanManagers.length > 0 ? (
-              clanManagers.map((manager, index) => (
+            <div
+              ref={managerListRef}
+              className="flex space-x-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar"
+            >
+              {clanManagers.map((manager, index) => (
                 <div
                   key={index}
                   className="flex-shrink-0 w-64 bg-gray-900 rounded-lg overflow-hidden border border-gray-700"
@@ -164,7 +155,7 @@ export const HomePage = () => {
                       onError={(e) => {
                         e.target.src = "/kanye-avatar.jpg";
                       }}
-                      loading="lazy" // Lazy loading the image
+                      loading="lazy"
                     />
                   </div>
                   <div className="p-4">
@@ -172,20 +163,20 @@ export const HomePage = () => {
                     <p className="text-sm text-gray-400">{manager.role}</p>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="w-full text-center">No managers available.</div>
-            )}
-          </div>
-          {clanManagers.length > 0 && (
+              ))}
+            </div>
             <button
               onClick={scrollRight}
-              className="absolute right-0 -mr-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300"
+              className="hidden md:block absolute right-0 -mr-10 top-1/2 transform -translate-y-1/2 text-4xl text-gray-400 hover:text-gray-500 transition-colors duration-300"
             >
               &gt;
             </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center min-h-[200px]">
+            <p className="text-lg text-white">No managers available</p>
+          </div>
+        )}
       </section>
 
       {/* Selecting Favorite Map Section */}
@@ -206,7 +197,6 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <Footer />
     </div>
   );
