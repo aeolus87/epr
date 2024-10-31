@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { Link } from "react-router-dom";
 export const TopNavigation = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,9 +57,11 @@ export const TopNavigation = () => {
               MENU
             </button>
 
-            <button className="bg-[#bc990e] text-white px-4 py-2 rounded hover:bg-[#65561a] transition-colors duration-300">
-              Join Us Now!
-            </button>
+            <Link to="/application">
+              <button className="bg-[#bc990e] text-white px-4 py-2 rounded hover:bg-[#65561a] transition-colors duration-300">
+                Join Us Now!
+              </button>
+            </Link>
           </div>
         </div>
 

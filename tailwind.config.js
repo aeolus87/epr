@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        slogan: ["Permanent Marker", "cursive"], // Add Smooch as 'slogan' font
+        slogan: ["Permanent Marker", "cursive"], 
       },
       animation: {
         slide: "slide 30s linear infinite",
@@ -12,7 +12,7 @@ module.exports = {
       keyframes: {
         slide: {
           "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(calc(-280px * 11 - 1.5rem * 11))" }, // Adjusted for 11 maps
+          "100%": { transform: "translateX(calc(-280px * 11 - 1.5rem * 11))" }, 
         },
       },
     },
