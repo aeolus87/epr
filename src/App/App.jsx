@@ -12,15 +12,14 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <SpeedInsights>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/attendance" element={<AttendancePage />} />
-            <Route path="/application" element={<ApplicationPage />} />
-            <Route path="/maps-poll-analytics" element={<MapPollPage />} />
-          </Routes>
-        </SpeedInsights>
+        <SpeedInsights />
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/attendance" element={<AttendancePage />} />
+          <Route path="/application" element={<ApplicationPage />} />
+          <Route path="/maps-poll-analytics" element={<MapPollPage />} />
+        </Routes>
       </Router>
     );
   }
