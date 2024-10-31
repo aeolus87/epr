@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Use Routes instead of Switch
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Pages
 import { HomePage } from "../Pages/HomePage";
@@ -11,13 +12,15 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/attendance" element={<AttendancePage />} />
-          <Route path="/application" element={<ApplicationPage />} />
-          <Route path="/maps-poll-analytics" element={<MapPollPage />} />
-        </Routes>
+        <SpeedInsights>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/attendance" element={<AttendancePage />} />
+            <Route path="/application" element={<ApplicationPage />} />
+            <Route path="/maps-poll-analytics" element={<MapPollPage />} />
+          </Routes>
+        </SpeedInsights>
       </Router>
     );
   }
